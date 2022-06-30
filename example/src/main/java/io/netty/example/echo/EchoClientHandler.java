@@ -19,12 +19,14 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Handler implementation for the echo client.  It initiates the ping-pong
  * traffic between the echo client and server by sending the first message to
  * the server.
  */
+@Slf4j
 public class EchoClientHandler extends ChannelInboundHandlerAdapter {
 
     private final ByteBuf firstMessage;
@@ -34,7 +36,7 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
      */
     public EchoClientHandler() {
         firstMessage = Unpooled.buffer(EchoClient.SIZE);
-        for (int i = 0; i < firstMessage.capacity(); i ++) {
+        for (int i = 0; i < firstMessage.capacity(); i++) {
             firstMessage.writeByte((byte) i);
         }
     }
@@ -45,13 +47,15 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws InterruptedException {
+        log.info("mgs : {}", msg);
+        Thread.sleep(1000 *10);
         ctx.write(msg);
     }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
-       ctx.flush();
+        ctx.flush();
     }
 
     @Override

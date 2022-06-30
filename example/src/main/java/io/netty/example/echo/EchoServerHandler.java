@@ -18,20 +18,24 @@ package io.netty.example.echo;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Handler implementation for the echo server.
  */
 @Sharable
+@Slf4j
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        ctx.write(msg);
+        log.info("channelRead, mgs : {}", msg);
+        ctx.writeAndFlush(msg);
     }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
+        log.info("channelReadComplete");
         ctx.flush();
     }
 
@@ -40,5 +44,41 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
         // Close the connection when an exception is raised.
         cause.printStackTrace();
         ctx.close();
+    }
+
+    @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        log.info("channelRegistered");
+        super.channelRegistered(ctx);
+    }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        log.info("channelUnregistered");
+        super.channelUnregistered(ctx);
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        log.info("channelActive");
+        super.channelActive(ctx);
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        log.info("channelInactive");
+        super.channelInactive(ctx);
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        log.info("userEventTriggered");
+        super.userEventTriggered(ctx, evt);
+    }
+
+    @Override
+    public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
+        log.info("channelWritabilityChanged");
+        super.channelWritabilityChanged(ctx);
     }
 }

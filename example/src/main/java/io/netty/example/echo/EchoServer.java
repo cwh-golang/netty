@@ -24,11 +24,13 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
+import io.netty.example.echo.handler.ServerLogHandler;
+import io.netty.example.echo.handler.WorkerLogHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+import io.netty.util.concurrent.DefaultThreadFactory;
+import io.netty.util.concurrent.UnorderedThreadPoolEventExecutor;
 
 /**
  * Echoes back any received data from a client.
@@ -49,15 +51,16 @@ public final class EchoServer {
         }
 
         // Configure the server.
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        EventLoopGroup bossGroup = new NioEventLoopGroup(2,new DefaultThreadFactory("boss", true));
+        EventLoopGroup workerGroup = new NioEventLoopGroup(new DefaultThreadFactory("worker", true));
+        final UnorderedThreadPoolEventExecutor bizThreadPool = new UnorderedThreadPoolEventExecutor(10);
         final EchoServerHandler serverHandler = new EchoServerHandler();
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
              .option(ChannelOption.SO_BACKLOG, 100)
-             .handler(new LoggingHandler(LogLevel.INFO))
+             .handler(new ServerLogHandler())
              .childHandler(new ChannelInitializer<SocketChannel>() {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
@@ -65,8 +68,8 @@ public final class EchoServer {
                      if (sslCtx != null) {
                          p.addLast(sslCtx.newHandler(ch.alloc()));
                      }
-                     //p.addLast(new LoggingHandler(LogLevel.INFO));
-                     p.addLast(serverHandler);
+                     p.addLast(new WorkerLogHandler());
+                     p.addLast(bizThreadPool,"bizThreadPool",serverHandler);
                  }
              });
 
