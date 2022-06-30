@@ -297,7 +297,7 @@ public abstract class AbstractNioChannel<P extends Channel, L extends SocketAddr
         // If there's a pending flush operation, event loop will call forceFlush() later,
         // and thus there's no need to call it now.
         if (!isFlushPending()) {
-            super.flush0();
+            forceFlush();
         }
     }
 

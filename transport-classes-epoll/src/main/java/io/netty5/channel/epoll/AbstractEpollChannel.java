@@ -21,7 +21,6 @@ import io.netty5.buffer.api.DefaultBufferAllocators;
 import io.netty5.channel.ChannelShutdownDirection;
 import io.netty5.util.Resource;
 import io.netty5.channel.AbstractChannel;
-import io.netty5.channel.Channel;
 import io.netty5.channel.ChannelConfig;
 import io.netty5.channel.ChannelException;
 import io.netty5.channel.ChannelMetadata;
@@ -490,8 +489,12 @@ abstract class AbstractEpollChannel<P extends UnixChannel, L extends SocketAddre
         // If there's a pending flush operation, event loop will call forceFlush() later,
         // and thus there's no need to call it now.
         if (!isFlagSet(Native.EPOLLOUT)) {
-            super.flush0();
+            forceFlush();
         }
+    }
+
+    protected final void forceFlush() {
+        super.flush0();
     }
 
     /**
@@ -502,8 +505,8 @@ abstract class AbstractEpollChannel<P extends UnixChannel, L extends SocketAddre
             // pending connect which is now complete so handle it.
             finishConnect();
         } else if (!socket.isOutputShutdown()) {
-            // directly call super.flush0() to force a flush now
-            super.flush0();
+            // directly call forceFlush() to force a flush now
+            forceFlush();
         }
     }
 
