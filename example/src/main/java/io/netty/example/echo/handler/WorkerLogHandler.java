@@ -18,13 +18,19 @@ public class WorkerLogHandler extends ChannelInboundHandlerAdapter {
     private static AtomicLong count = new AtomicLong(0);
     private Boolean pass = true;
 
+    private static Long constructCounter = 0L;
+
+    public WorkerLogHandler() {
+        constructCounter++;
+    }
+
     private boolean isLimited() {
         //可以根据设备的在线数量，进行动态阈值调整
         //在机器刚加入到elb里面去，这时，由于外部的流量巨大，这时应该限制连接数量为一个较小的值，比如 1000，这样能有效的保护
         //后端业务处理的线程和后端模块
         //随着连接的建立，
         //主要的目的上为了让设备连接的数量平滑增长，不会导致后端有洪峰，因为在建立连接的时候，业务处理相对比较复杂
-        if (count.getAndIncrement() % 2 == 1) {
+        if (count.getAndIncrement() > 100) {
             return true;
         }
         return false;
@@ -32,6 +38,7 @@ public class WorkerLogHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        log.info("WorkerLogHandler construct count is {}", constructCounter);
         if (isLimited()) {
             System.out.println("andIncrement = " + count.get());
             log.info("channel closed");

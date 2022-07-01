@@ -1,4 +1,6 @@
-package io.netty.example.echo;
+package io.netty.example.echo.handler;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -9,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
  * @createTime 2022年06月30日 14:56:00
  */
 @Slf4j
-public class ServerLogHandler extends ChannelInboundHandlerAdapter {
+public class BossLogHandler extends ChannelInboundHandlerAdapter {
+    private static AtomicLong counter = new AtomicLong(0);
+
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         log.info("channelRegistered");
@@ -37,8 +41,11 @@ public class ServerLogHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         log.info("channelRead");
+        if (counter.getAndIncrement() % 2 == 0) {
+            throw new RuntimeException();
+        }
 //        ctx.close();
-        super.channelRead(ctx, msg);
+//        super.channelRead(ctx, msg);
 //        ctx.channel().close();
     }
 

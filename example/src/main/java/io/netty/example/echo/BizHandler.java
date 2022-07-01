@@ -15,6 +15,8 @@
  */
 package io.netty.example.echo;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -25,12 +27,20 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Sharable
 @Slf4j
-public class EchoServerHandler extends ChannelInboundHandlerAdapter {
+public class BizHandler extends ChannelInboundHandlerAdapter {
+
+    private static AtomicLong counter = new AtomicLong(0);
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        log.info("channelRead, mgs : {}", msg);
-        ctx.writeAndFlush(msg);
+        log.info("channelRead, ctx:{}, mgs : {}", ctx, msg);
+        //关闭通道，查看前面的handler是否会捕捉该通道的被关闭的事件 -- 实验证明，是可以的
+        if (counter.getAndIncrement() > 5) {
+            ctx.channel().close();
+            log.info("channelRead closed");
+        } else {
+            ctx.writeAndFlush(msg);
+        }
     }
 
     @Override
