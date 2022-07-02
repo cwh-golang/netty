@@ -36,7 +36,7 @@ public class BizHandler extends ChannelInboundHandlerAdapter {
         log.info("channelRead, ctx:{}, mgs : {}", ctx, msg);
         //关闭通道，查看前面的handler是否会捕捉该通道的被关闭的事件 -- 实验证明，是可以的
         if (counter.getAndIncrement() > 5) {
-            ctx.channel().close();
+//            ctx.channel().close();
             log.info("channelRead closed");
         } else {
             ctx.writeAndFlush(msg);
