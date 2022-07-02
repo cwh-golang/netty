@@ -51,27 +51,28 @@ public final class EchoServer {
         }
 
         // Configure the server.
-        EventLoopGroup bossGroup = new NioEventLoopGroup(2,new DefaultThreadFactory("boss", true));
+        EventLoopGroup bossGroup = new NioEventLoopGroup(2, new DefaultThreadFactory("boss", true));
         EventLoopGroup workerGroup = new NioEventLoopGroup(new DefaultThreadFactory("worker", true));
-        final UnorderedThreadPoolEventExecutor bizThreadPool = new UnorderedThreadPoolEventExecutor(10);
+        final UnorderedThreadPoolEventExecutor bizThreadPool = new UnorderedThreadPoolEventExecutor(10, new DefaultThreadFactory("biz"));
+//        final UnorderedThreadPoolEventExecutor bizThreadPool = new UnorderedThreadPoolEventExecutor(10);
         final BizHandler bizHandler = new BizHandler();
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
-             .channel(NioServerSocketChannel.class)
-             .option(ChannelOption.SO_BACKLOG, 100)
-             .handler(new BossLogHandler())
-             .childHandler(new ChannelInitializer<SocketChannel>() {
-                 @Override
-                 public void initChannel(SocketChannel ch) throws Exception {
-                     ChannelPipeline p = ch.pipeline();
-                     if (sslCtx != null) {
-                         p.addLast(sslCtx.newHandler(ch.alloc()));
-                     }
-                     p.addLast(new WorkerLogHandler());
-                     p.addLast(bizThreadPool,"bizThreadPool",bizHandler);
-                 }
-             });
+                    .channel(NioServerSocketChannel.class)
+                    .option(ChannelOption.SO_BACKLOG, 100)
+                    .handler(new BossLogHandler())
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        public void initChannel(SocketChannel ch) throws Exception {
+                            ChannelPipeline p = ch.pipeline();
+                            if (sslCtx != null) {
+                                p.addLast(sslCtx.newHandler(ch.alloc()));
+                            }
+                            p.addLast(new WorkerLogHandler());
+                            p.addLast(bizThreadPool, "bizHandler", bizHandler);
+                        }
+                    });
 
             // Start the server.
             ChannelFuture f = b.bind(PORT).sync();

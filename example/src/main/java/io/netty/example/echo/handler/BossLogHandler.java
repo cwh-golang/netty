@@ -42,10 +42,10 @@ public class BossLogHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         log.info("channelRead");
         if (counter.getAndIncrement() % 2 == 0) {
-            throw new RuntimeException();
+//            throw new RuntimeException();
         }
 //        ctx.close();
-//        super.channelRead(ctx, msg);
+        super.channelRead(ctx, msg);
 //        ctx.channel().close();
     }
 
