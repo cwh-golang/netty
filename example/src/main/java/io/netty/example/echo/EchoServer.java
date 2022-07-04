@@ -24,8 +24,11 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.example.echo.handler.BossLogHandler;
-import io.netty.example.echo.handler.WorkerLogHandler;
+import io.netty.example.echo.handler.server.BizHandler;
+import io.netty.example.echo.handler.server.BlockHandler;
+import io.netty.example.echo.handler.server.BossLogHandler;
+import io.netty.example.echo.handler.server.WorkerLogHandler;
+import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
@@ -51,8 +54,8 @@ public final class EchoServer {
         }
 
         // Configure the server.
-        EventLoopGroup bossGroup = new NioEventLoopGroup(2, new DefaultThreadFactory("boss", true));
-        EventLoopGroup workerGroup = new NioEventLoopGroup(new DefaultThreadFactory("worker", true));
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("boss", true));
+        EventLoopGroup workerGroup = new NioEventLoopGroup(5, new DefaultThreadFactory("worker", true));
         final UnorderedThreadPoolEventExecutor bizThreadPool = new UnorderedThreadPoolEventExecutor(10, new DefaultThreadFactory("biz"));
 //        final UnorderedThreadPoolEventExecutor bizThreadPool = new UnorderedThreadPoolEventExecutor(10);
         final BizHandler bizHandler = new BizHandler();
@@ -69,8 +72,10 @@ public final class EchoServer {
                             if (sslCtx != null) {
                                 p.addLast(sslCtx.newHandler(ch.alloc()));
                             }
+                            p.addLast(new StringDecoder());
                             p.addLast(new WorkerLogHandler());
-                            p.addLast(bizThreadPool, "bizHandler", bizHandler);
+                            p.addLast(new BlockHandler());
+//                            p.addLast(bizThreadPool, "bizHandler", bizHandler);
                         }
                     });
 

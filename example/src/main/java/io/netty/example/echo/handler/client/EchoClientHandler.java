@@ -13,12 +13,13 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package io.netty.example.echo;
+package io.netty.example.echo.handler.client;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.example.echo.EchoClient;
 import lombok.extern.slf4j.Slf4j;
 
 /**

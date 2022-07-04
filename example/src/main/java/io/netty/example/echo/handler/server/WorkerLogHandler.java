@@ -1,4 +1,4 @@
-package io.netty.example.echo.handler;
+package io.netty.example.echo.handler.server;
 
 import java.util.concurrent.atomic.AtomicLong;
 
