@@ -25,6 +25,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.example.echo.handler.client.EchoClientHandler;
+import io.netty.example.echo.handler.client.EchoNewClientHandler;
 import io.netty.example.echo.handler.client.SendForeverHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -68,7 +69,8 @@ public final class EchoClient {
                          p.addLast(sslCtx.newHandler(ch.alloc(), HOST, PORT));
                      }
                      //p.addLast(new LoggingHandler(LogLevel.INFO));
-                     p.addLast(new SendForeverHandler());
+//                     p.addLast(new SendForeverHandler());
+                     p.addLast(new EchoNewClientHandler());
 //                     p.addLast(new EchoClientHandler());
                  }
              });

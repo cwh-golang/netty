@@ -24,10 +24,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.example.echo.handler.server.BizHandler;
-import io.netty.example.echo.handler.server.BlockHandler;
-import io.netty.example.echo.handler.server.BossLogHandler;
-import io.netty.example.echo.handler.server.WorkerLogHandler;
+import io.netty.example.echo.handler.server.*;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -64,7 +61,7 @@ public final class EchoServer {
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG, 100)
-                    .handler(new BossLogHandler())
+//                    .handler(new BossLogHandler())
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
@@ -73,7 +70,8 @@ public final class EchoServer {
                                 p.addLast(sslCtx.newHandler(ch.alloc()));
                             }
 //                            p.addLast(new StringDecoder());
-                            p.addLast(new WorkerLogHandler());
+//                            p.addLast(new WorkerLogHandler());
+                            p.addLast(new EchoServerHandler());
 //                            p.addLast(new BlockHandler());
 //                            p.addLast(bizThreadPool, "bizHandler", bizHandler);
                         }
