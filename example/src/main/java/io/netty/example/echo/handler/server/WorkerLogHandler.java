@@ -1,5 +1,7 @@
 package io.netty.example.echo.handler.server;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.concurrent.atomic.AtomicLong;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -18,10 +20,10 @@ public class WorkerLogHandler extends ChannelInboundHandlerAdapter {
     private static AtomicLong count = new AtomicLong(0);
     private Boolean pass = true;
 
-    private static Long constructCounter = 0L;
+    private static AtomicLong constructCounter = new AtomicLong(0);
 
     public WorkerLogHandler() {
-        constructCounter++;
+        constructCounter.incrementAndGet();
     }
 
     private boolean isLimited() {
@@ -38,6 +40,8 @@ public class WorkerLogHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        InetSocketAddress inetSocketAddress = (InetSocketAddress) (ctx.channel().remoteAddress());
+        log.info(inetSocketAddress.toString());
         log.info("WorkerLogHandler construct count is {}", constructCounter);
         if (isLimited()) {
             System.out.println("andIncrement = " + count.get());

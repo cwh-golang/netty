@@ -36,7 +36,7 @@ public class SendForeverHandler extends ChannelInboundHandlerAdapter {
             ctx.writeAndFlush(firstMessage);
 
             try {
-                Thread.sleep(10);
+                Thread.sleep(1000);
             } catch (Exception e) {
                 log.info("exception :", e);
             }

@@ -72,9 +72,9 @@ public final class EchoServer {
                             if (sslCtx != null) {
                                 p.addLast(sslCtx.newHandler(ch.alloc()));
                             }
-                            p.addLast(new StringDecoder());
+//                            p.addLast(new StringDecoder());
                             p.addLast(new WorkerLogHandler());
-                            p.addLast(new BlockHandler());
+//                            p.addLast(new BlockHandler());
 //                            p.addLast(bizThreadPool, "bizHandler", bizHandler);
                         }
                     });
