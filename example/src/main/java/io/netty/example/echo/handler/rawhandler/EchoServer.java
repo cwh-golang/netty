@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package io.netty.example.echo;
+package io.netty.example.echo.handler.rawhandler;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -24,15 +24,11 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.example.echo.handler.rawhandler.*;
-import io.netty.example.echo.handler.server.BizHandler;
-import io.netty.example.echo.handler.server.BlockHandler;
-import io.netty.example.echo.handler.server.WorkerLogHandler;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
-import io.netty.util.concurrent.DefaultThreadFactory;
-import io.netty.util.concurrent.UnorderedThreadPoolEventExecutor;
 
 /**
  * Echoes back any received data from a client.
@@ -53,32 +49,26 @@ public final class EchoServer {
         }
 
         // Configure the server.
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("boss", true));
-        EventLoopGroup workerGroup = new NioEventLoopGroup(5, new DefaultThreadFactory("worker", true));
-        final UnorderedThreadPoolEventExecutor bizThreadPool = new UnorderedThreadPoolEventExecutor(10, new DefaultThreadFactory("biz"));
-//        final UnorderedThreadPoolEventExecutor bizThreadPool = new UnorderedThreadPoolEventExecutor(10);
-        final BizHandler bizHandler = new BizHandler();
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        final EchoServerRawHandler serverHandler = new EchoServerRawHandler();
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .option(ChannelOption.SO_BACKLOG, 100)
-//                    .handler(new BossLogHandler())
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        public void initChannel(SocketChannel ch) throws Exception {
-                            ChannelPipeline p = ch.pipeline();
-                            if (sslCtx != null) {
-                                p.addLast(sslCtx.newHandler(ch.alloc()));
-                            }
-//                            p.addLast(new StringDecoder());
-                            p.addLast(new WorkerLogHandler());
-//                            p.addLast(new EchoServerRawHandler());
-                            p.addLast(new BlockHandler());
-                            p.addLast(bizHandler);
-//                            p.addLast(bizThreadPool, "bizHandler", bizHandler);
-                        }
-                    });
+             .channel(NioServerSocketChannel.class)
+             .option(ChannelOption.SO_BACKLOG, 100)
+             .handler(new LoggingHandler(LogLevel.INFO))
+             .childHandler(new ChannelInitializer<SocketChannel>() {
+                 @Override
+                 public void initChannel(SocketChannel ch) throws Exception {
+                     ChannelPipeline p = ch.pipeline();
+                     if (sslCtx != null) {
+                         p.addLast(sslCtx.newHandler(ch.alloc()));
+                     }
+                     //p.addLast(new LoggingHandler(LogLevel.INFO));
+                     p.addLast(serverHandler);
+                 }
+             });
 
             // Start the server.
             ChannelFuture f = b.bind(PORT).sync();
