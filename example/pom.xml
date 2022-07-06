@@ -204,7 +204,7 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
+<!--        <pluginManagement>-->
             <plugins>
                 <!-- run-example.sh invokes this plugin to launch an example. -->
                 <plugin>
@@ -246,7 +246,6 @@
                                 <descriptorRefs>
                                     <descriptorRef>jar-with-dependencies</descriptorRef>
                                 </descriptorRefs>
-                                <outputDirectory>G:\javaproject\output\</outputDirectory>
                             </configuration>
                         </execution>
                         <execution>
@@ -267,15 +266,51 @@
                                 <descriptorRefs>
                                     <descriptorRef>jar-with-dependencies</descriptorRef>
                                 </descriptorRefs>
-                                <outputDirectory>G:\javaproject\output\</outputDirectory>
                             </configuration>
 
                         </execution>
                     </executions>
                 </plugin>
-
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <!-- 指定打包的jar包输出路径 -->
+                        <outputDirectory>G:\javaproject\output\</outputDirectory>
+                        <!--不打入jar包的文件类型或者路径 -->
+                    </configuration>
+                </plugin>
+                <!-- 把jar包拷贝到指定目录位置 -->
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>copy</id>
+                            <phase>package</phase>
+                            <configuration>
+                                <tasks>
+                                    <copy todir="G:\javaproject\output\">
+                                        <fileset dir="${project.build.directory}">
+                                            <include name="${project.artifactId}-${project.version}.jar" />
+                                            <include name="*.jar" />
+                                        </fileset>
+                                    </copy>
+                                </tasks>
+                            </configuration>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
-        </pluginManagement>
+
+<!--        </pluginManagement>-->
     </build>
 </project>
 
+<!-- maven 打包命令：
+ 要到 pom同级命令下打包
+ mvn clean package -Dcheckstyle.skip -Dforbiddenapis.skip -Dxml.skip
+
+ -->
