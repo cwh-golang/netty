@@ -30,25 +30,25 @@ public class SendForeverHandler extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) {
         log.info("channelActive");
 
-        Runnable runnable = new Runnable() {
-
-            @Override
-            public void run() {
-                int i = 0;
-                while (true) {
-                    String msg = "send message count ".concat(String.valueOf(i++));
-                    log.info(msg);
-//                    ctx.writeAndFlush(firstMessage);
-                    ctx.writeAndFlush(msg);
-
-                    try {
-                        Thread.sleep(1000);
-                    } catch (Exception e) {
-                        log.info("exception :", e);
-                    }
-                }
-            }
-        };
-        new Thread(runnable).start();
+//        Runnable runnable = new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                int i = 0;
+//                while (true) {
+//                    String msg = "send message count ".concat(String.valueOf(i++));
+//                    log.info(msg);
+////                    ctx.writeAndFlush(firstMessage);
+//                    ctx.writeAndFlush(msg);
+//
+//                    try {
+//                        Thread.sleep(1000);
+//                    } catch (Exception e) {
+//                        log.info("exception :", e);
+//                    }
+//                }
+//            }
+//        };
+//        new Thread(runnable).start();
     }
 }
