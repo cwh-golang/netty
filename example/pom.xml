@@ -204,113 +204,110 @@
     </dependencies>
 
     <build>
-<!--        <pluginManagement>-->
-            <plugins>
-                <!-- run-example.sh invokes this plugin to launch an example. -->
-                <plugin>
-                    <groupId>kr.motd.maven</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <configuration>
-                        <executable>${java.home}/bin/java</executable>
-                        <commandlineArgs>
-                            ${argLine.common}
-                            ${argLine.alpnAgent}
-                            -classpath %classpath
-                            ${argLine.leak}
-                            ${argLine.coverage}
-                            ${argLine.example}
-                            ${exampleClass}
-                        </commandlineArgs>
-                    </configuration>
-                </plugin>
+        <plugins>
+            <!-- run-example.sh invokes this plugin to launch an example. -->
+            <plugin>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <executable>${java.home}/bin/java</executable>
+                    <commandlineArgs>
+                        ${argLine.common}
+                        ${argLine.alpnAgent}
+                        -classpath %classpath
+                        ${argLine.leak}
+                        ${argLine.coverage}
+                        ${argLine.example}
+                        ${exampleClass}
+                    </commandlineArgs>
+                </configuration>
+            </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>id1</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
-                            <configuration>
-                                <finalName>EchoClient</finalName>
-                                <archive>
-                                    <manifest>
-                                        <mainClass>
-                                            io.netty.example.echo.handler.rawhandler.EchoClient
-                                        </mainClass>
-                                    </manifest>
-                                </archive>
-                                <descriptorRefs>
-                                    <descriptorRef>jar-with-dependencies</descriptorRef>
-                                </descriptorRefs>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>id2</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
-                            <configuration>
-                                <finalName>EchoServer</finalName>
-                                <archive>
-                                    <manifest>
-                                        <mainClass>
-                                            io.netty.example.echo.handler.rawhandler.EchoServer
-                                        </mainClass>
-                                    </manifest>
-                                </archive>
-                                <descriptorRefs>
-                                    <descriptorRef>jar-with-dependencies</descriptorRef>
-                                </descriptorRefs>
-                            </configuration>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>id1</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>EchoClient</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>
+                                        io.netty.example.echo.handler.rawhandler.EchoClient
+                                    </mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>id2</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>EchoServer</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>
+                                        io.netty.example.echo.handler.rawhandler.EchoServer
+                                    </mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
 
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <configuration>
-                        <!-- 指定打包的jar包输出路径 -->
-                        <outputDirectory>G:\javaproject\output\</outputDirectory>
-                        <!--不打入jar包的文件类型或者路径 -->
-                    </configuration>
-                </plugin>
-                <!-- 把jar包拷贝到指定目录位置 -->
-                <plugin>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>copy</id>
-                            <phase>package</phase>
-                            <configuration>
-                                <tasks>
-                                    <copy todir="G:\javaproject\output\">
-                                        <fileset dir="${project.build.directory}">
-                                            <include name="${project.artifactId}-${project.version}.jar" />
-                                            <include name="*.jar" />
-                                        </fileset>
-                                    </copy>
-                                </tasks>
-                            </configuration>
-                            <goals>
-                                <goal>run</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-
-<!--        </pluginManagement>-->
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <!-- 指定打包的jar包输出路径 -->
+                    <outputDirectory>G:\javaproject\output\</outputDirectory>
+                    <!--不打入jar包的文件类型或者路径 -->
+                </configuration>
+            </plugin>
+            <!-- 把jar包拷贝到指定目录位置 -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <copy todir="G:\javaproject\output\">
+                                    <fileset dir="${project.build.directory}">
+                                        <include name="${project.artifactId}-${project.version}.jar"/>
+                                        <include name="*.jar"/>
+                                    </fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>
 
-<!-- maven 打包命令：
- 要到 pom同级命令下打包
- mvn clean package -Dcheckstyle.skip -Dforbiddenapis.skip -Dxml.skip
+        <!-- maven 打包命令：
+         要到 pom同级命令下打包
+         mvn clean package -Dcheckstyle.skip -Dforbiddenapis.skip -Dxml.skip
 
- -->
+         -->
