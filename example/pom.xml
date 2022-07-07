@@ -275,7 +275,8 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <!-- 指定打包的jar包输出路径 -->
-                    <outputDirectory>G:\javaproject\output\</outputDirectory>
+<!--                    <outputDirectory>G:\javaproject\output\</outputDirectory>-->
+                    <outputDirectory>D:/D2/output/server</outputDirectory>
                     <!--不打入jar包的文件类型或者路径 -->
                 </configuration>
             </plugin>
@@ -288,7 +289,7 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <copy todir="G:\javaproject\output\">
+                                <copy todir="D:\D2\output\server">
                                     <fileset dir="${project.build.directory}">
                                         <include name="${project.artifactId}-${project.version}.jar"/>
                                         <include name="*.jar"/>
